@@ -8,7 +8,7 @@ fi
 
 # make our folders
 mkdir -p \
-  /config/{nginx/site-confs,nginx/proxy-confs,public_html,log/nginx,keys} \
+  /config/{nginx/site-confs,nginx/proxy-confs,public_html,log/nginx} \
   /run \
   /var/lib/nginx/tmp/client_body \
   /var/tmp/nginx
@@ -20,6 +20,18 @@ mkdir -p \
   cp /defaults/default.conf /config/nginx/site-confs/default.conf
 [[ $(find /config/public_html -type f | wc -l) -eq 0 ]] &&
   cp /defaults/index.html /config/public_html/index.html
+
+# setup symlinks
+[[ ! -d /config/keys ]] &&
+  ln -s /swag/keys /config/keys
+[[ ! -f /config/nginx/ssl.conf ]] &&
+  ln -s /swag/nginx/ssl.conf /config/nginx/ssl.conf
+[[ ! -f /config/nginx/security.conf ]] &&
+  ln -s /swag/nginx/security.conf /config/nginx/security.conf
+[[ ! -f /config/nginx/cloudflare.conf ]] &&
+  ln -s /swag/nginx/cloudflare.conf /config/nginx/cloudflare.conf
+[[ ! -f /config/nginx/dhparams.pem ]] &&
+  ln -s /swag/nginx/dhparams.pem /config/nginx/dhparams.pem
 
 # permissions
 chown -R abc:abc \
