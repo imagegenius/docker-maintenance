@@ -1,6 +1,6 @@
 /config/log/nginx/*.log {
     daily
-    rotate 2
+    rotate 1
     nodateext
     notifempty
     missingok
