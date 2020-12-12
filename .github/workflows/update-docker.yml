@@ -19,6 +19,7 @@ jobs:
         echo "hydazz" >/tmp/GH_USER
         echo "docker-maintenance" >/tmp/GH_REPO
         echo "vcxpz/maintenance" >/tmp/DOCKERHUB_IMAGE
+        echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/version
     - name: Docker Login
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
@@ -27,7 +28,7 @@ jobs:
         echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --build-arg build_version="hydaz version:- $VERSION Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="${GITHUB_REF##*/}" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
+        docker build . --file Dockerfile --build-arg build_version="hydaz version:- $(cat /tmp/version) Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="$(cat /tmp/version)" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
     - name: Update Packages Versions
       env:
         GIT_KEY: ${{ secrets.GIT_KEY }}
@@ -36,7 +37,7 @@ jobs:
                   apk info -v > /tmp/package_versions.txt && \
                   sort -o /tmp/package_versions.txt  /tmp/package_versions.txt && \
                   chmod 777 /tmp/package_versions.txt'
-        curl -sSL https://raw.githubusercontent.com/hydazz/$(cat /tmp/GH_REPO)/master/push_updates.sh | bash
+        curl -sSL https://raw.githubusercontent.com/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO)/master/push_updates.sh | bash
         if [ "$(cat /tmp/do_update)" = "true" ]; then \
           git push https://$(cat /tmp/GH_USER):$GIT_KEY@github.com/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO).git --all
         fi
