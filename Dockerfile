@@ -1,4 +1,4 @@
-FROM vcxpz/docker-baseimage-alpine:latest
+FROM vcxpz/baseimage-alpine:latest
 
 # Set Arguments
 ARG BUILD_DATE
