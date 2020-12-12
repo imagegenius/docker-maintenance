@@ -1,9 +1,6 @@
 FROM vcxpz/docker-baseimage-alpine:latest
 
 # Set Arguments
-ARG BUILD_DATE
-ARG VERSION
-#LABEL build_version="Fork of Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL build_version="Version:- 2020-12-12"
 LABEL maintainer="hydaz"
 
