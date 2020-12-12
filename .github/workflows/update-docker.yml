@@ -1,11 +1,11 @@
 name: Docker Update CI
-
 on:
   release:
     types:
       - created
   schedule:
     - cron:  '0 0 * * 5'
+  workflow_dispatch:
 #  push:
 #    branches: [ master ]
 
