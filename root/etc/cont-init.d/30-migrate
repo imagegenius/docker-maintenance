@@ -31,3 +31,12 @@ if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
   echo "[cont-init.d] 20-config: NGINX config is invalid, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
   sleep infinity
 fi
+
+# permissions
+chown -R abc:abc \
+  /config \
+  /var/lib/nginx \
+  /var/tmp/nginx
+chmod -R g+w \
+  /config/{nginx,public_html}
+chmod -R 644 /etc/logrotate.d
