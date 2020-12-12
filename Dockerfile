@@ -9,14 +9,9 @@ RUN \
  apk upgrade --no-cache && \
   echo "**** install build packages ****" && \
   apk add --no-cache \
- 	apache2-utils \
- 	git \
- 	libressl3.1-libssl \
  	logrotate \
- 	nano \
  	nginx \
-  nginx-mod-http-headers-more \
- 	openssl && \
+  nginx-mod-http-headers-more && \
   echo "**** configure nginx ****" && \
   rm -f /etc/nginx/conf.d/default.conf && \
   echo "**** fix logrotate ****" && \
