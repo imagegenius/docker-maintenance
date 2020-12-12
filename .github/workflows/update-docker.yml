@@ -27,7 +27,7 @@ jobs:
       env:
         VERSION: ${GITHUB_REF##*/}
       run: |
-        docker build . --file Dockerfile --build-arg build_version="Fork of Linuxserver.io version:- $VERSION Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
+        docker build . --file Dockerfile --build-arg build_version="hydaz version:- $VERSION Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
     - name: Update Packages Versions
       env:
         GIT_KEY: ${{ secrets.GIT_KEY }}
