@@ -1,6 +1,6 @@
 
 ## docker-maintenance
-Barebones NGINX server, specifically made to be a maintenance page for when your SWAG container is down. Theoretically, when you stop your SWAG container, and spin this one up it should just work. When you startup this image it will attempt to migrate from SWAG and it works for me so whatever, you may need to change some settings in your nginx configs inorder for it to start properly
+Barebones NGINX server, specifically made to be a maintenance page for when your SWAG container is down. Theoretically, when you stop your SWAG container and spin this one up, it should just work. When you startup this image it will attempt to migrate from SWAG, and it works for me so whatever, you may need to change some settings in your NGINX configs in order for it to start properly
 
 ## Usage
 
