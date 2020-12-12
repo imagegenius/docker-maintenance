@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+
+# setup symlinks
+[[ ! -d /config/keys ]] &&
+  ln -s /swag/keys /config/keys
+
+# migrate SWAG configs
+cp -f /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
+
+# modify Lines
+sed -i \
+  -e 's/root .*;/root \/config\/public_html\/;/g' \
+  -e 's/index .*;/index index.html;/g' \
+  /config/nginx/site-confs/*
+
+# remove unneeded lines
+sed -i \
+  -e '/access_log.*/d' \
+  -e '/error_log.*/d' \
+  -e '/include.*nginx.conf;/d' \
+  /config/nginx/site-confs/*
+
+for includes in $(cat /config/includes.txt); do
+  if [ ! -f /config/nginx/$includes ]; then
+    ln -s /swag/nginx/$includes /config/nginx/$includes
+  fi
+done
+
+if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
+  nginx -t -c /config/nginx/nginx.conf
+  echo "[cont-init.d] 20-config: NGINX config is invalid, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
+  sleep infinity
+fi

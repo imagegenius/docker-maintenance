@@ -21,26 +21,15 @@ mkdir -p \
 [[ $(find /config/public_html -type f | wc -l) -eq 0 ]] &&
   cp /defaults/index.html /config/public_html/index.html
 
-# setup symlinks
-[[ ! -d /config/keys ]] &&
-  ln -s /swag/keys /config/keys
-[[ ! -f /config/nginx/ssl.conf ]] &&
-  ln -s /swag/nginx/ssl.conf /config/nginx/ssl.conf
-[[ ! -f /config/nginx/security.conf ]] &&
-  ln -s /swag/nginx/security.conf /config/nginx/security.conf
-[[ ! -f /config/nginx/cloudflare.conf ]] &&
-  ln -s /swag/nginx/cloudflare.conf /config/nginx/cloudflare.conf
-[[ ! -f /config/nginx/dhparams.pem ]] &&
-  ln -s /swag/nginx/dhparams.pem /config/nginx/dhparams.pem
-[[ ! -f /config/nginx/proxy.conf ]] &&
-  ln -s /swag/nginx/proxy.conf /config/nginx/proxy.conf
-
-cp -f /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
-
-sed -i \
-  -e 's/root .*;/root \/config\/public_html\/;/g' \
-  -e 's/index .*;/index index.html;/g' \
-  /config/nginx/site-confs/*
+if [ ! -f /config/includes.txt ]; then
+  echo "proxy.conf
+        ssl.conf"
+  >/config/includes.txt
+  echo "Add a list of includes in the /config/includes.txt file to migrate over. DO NOT include paths to files. i.e use sample.conf instead of /config/nginx/sample.conf."
+  echo "This only works for files within the nginx directory!"
+  echo "This is useful if you have any includes in your nginx configs"
+  echo "Restart the container when you are done"
+fi
 
 # permissions
 chown -R abc:abc \
@@ -50,9 +39,3 @@ chown -R abc:abc \
 chmod -R g+w \
   /config/{nginx,public_html}
 chmod -R 644 /etc/logrotate.d
-
-if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
-  nginx -t -c /config/nginx/nginx.conf
-  echo "[cont-init.d] 20-config: Nginx config is invalid, Check your configs!"
-  sleep infinity
-fi
