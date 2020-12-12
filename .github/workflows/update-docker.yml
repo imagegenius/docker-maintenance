@@ -1,0 +1,46 @@
+name: Docker Update CI
+
+on:
+  release:
+    types:
+      - created
+  schedule:
+    - cron:  '0 0 * * 5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Varibles
+      run: |
+        echo "hydazz" >/tmp/GH_USER
+        echo "docker-maintenance" >/tmp/GH_REPO
+        echo "vcxpz/maintenance" >/tmp/DOCKERHUB_IMAGE
+    - name: Docker Login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+    - name: Build the Docker image
+      env:
+        VERSION: ${GITHUB_REF##*/}
+      run: |
+        docker build . --file Dockerfile --build-arg build_version="Fork of Linuxserver.io version:- $VERSION Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
+    - name: Update Packages Versions
+      env:
+        GIT_KEY: ${{ secrets.GIT_KEY }}
+      run: |
+        docker run --rm --entrypoint '/bin/sh' -v /tmp:/tmp $(cat /tmp/DOCKERHUB_IMAGE):latest -c '\
+                  apk info -v > /tmp/package_versions.txt && \
+                  sort -o /tmp/package_versions.txt  /tmp/package_versions.txt && \
+                  chmod 777 /tmp/package_versions.txt'
+        curl -sSL https://raw.githubusercontent.com/hydazz/$(cat /tmp/GH_REPO)/master/push_updates.sh | bash
+        if [ "$(cat /tmp/do_update)" = "true" ]; then \
+          git push https://$(cat /tmp/GH_USER):$GIT_KEY@github.com/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO).git --all
+        fi
+        exit 0
+    - name: Docker Push
+      run: |
+        docker push $(cat /tmp/DOCKERHUB_IMAGE):latest
