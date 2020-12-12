@@ -19,7 +19,7 @@ jobs:
         echo "hydazz" >/tmp/GH_USER
         echo "docker-maintenance" >/tmp/GH_REPO
         echo "vcxpz/maintenance" >/tmp/DOCKERHUB_IMAGE
-        echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO)/releases" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/version
+        echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/version
     - name: Docker Login
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
