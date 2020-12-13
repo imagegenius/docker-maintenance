@@ -7,7 +7,7 @@ LABEL build_version="hydaz version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
 RUN \
-  echo "**** install build packages ****" && \
+  echo "**** install packages ****" && \
   apk add --no-cache \
  	logrotate \
  	nginx \
