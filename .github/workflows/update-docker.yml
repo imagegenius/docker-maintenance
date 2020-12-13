@@ -10,7 +10,7 @@ on:
     paths-ignore:
       - '**/README.md'
       - '**/package_versions.txt'
-      - '**/docker-update.yml'
+      - '.github/workflows/docker-update.yml'
 
 jobs:
   build:
