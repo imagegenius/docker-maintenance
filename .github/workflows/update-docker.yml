@@ -16,7 +16,7 @@ jobs:
         mkdir /tmp/workdir
         # This may not be a pretty way to set env variables but it works
         echo "hydazz" >/tmp/workdir/GH_USER
-        echo "docker-docker-maintenance" >/tmp/workdir/GH_REPO
+        echo "docker-maintenance" >/tmp/workdir/GH_REPO
         echo "vcxpz/maintenance" >/tmp/workdir/DOCKERHUB_IMAGE
         # Set the user below to $(cat /tmp/workdir/GH_USER) or manually set it
         echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/workdir/GH_USER)/$(cat /tmp/workdir/GH_REPO)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/workdir/version
