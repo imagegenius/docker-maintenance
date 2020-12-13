@@ -7,7 +7,7 @@
 # migrate SWAG configs
 cp -f /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
 
-# modify Lines
+# modify swag configs
 sed -i \
   -e 's/root .*;/root \/config\/public_html\/;/g' \
   -e 's/index .*;/index index.html;/g' \
@@ -21,8 +21,8 @@ sed -i \
   /config/nginx/site-confs/*
 
 for includes in $(cat /config/includes.txt); do
-  if [ ! -f /config/nginx/$includes ]; then
-    ln -s /swag/nginx/$includes /config/nginx/$includes
+  if [ ! -f /config/nginx/"$includes" ]; then
+    ln -s /swag/nginx/"$includes" /config/nginx/"$includes"
   fi
 done
 
