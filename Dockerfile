@@ -23,8 +23,7 @@ RUN \
  COPY root/ /
 
  # check nginx configs
- HEALTHCHECK --interval=5m --timeout=3s \
-   CMD nginx -t -c /config/nginx/nginx.conf || exit 1
+ HEALTHCHECK CMD nginx -t -c /config/nginx/nginx.conf || exit 1
 
  # ports and volumes
  EXPOSE 80 443
