@@ -1,13 +1,10 @@
 name: Docker Update CI
 on:
-  release:
-    types:
-      - created
   schedule:
-    - cron:  '0 0 * * 6'
+    - cron:  '0 0 * * 2'
   workflow_dispatch:
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
@@ -22,13 +19,12 @@ jobs:
         echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/GH_USER)/$(cat /tmp/GH_REPO)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/version
     - name: Docker Login
       env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+        echo $DOCKER_PASSWORD | docker login -u vcxpz --password-stdin
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --build-arg build_version="hydaz version:- $(cat /tmp/version) Build-date:- $(date +%Y-%m-%d)" --build-arg VERSION="$(cat /tmp/version)" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
+        docker build . --file Dockerfile --build-arg VERSION="$(cat /tmp/version)" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/DOCKERHUB_IMAGE):latest
     - name: Update Packages Versions
       env:
         GIT_KEY: ${{ secrets.GIT_KEY }}
