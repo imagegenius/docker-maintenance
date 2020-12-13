@@ -1,10 +1,16 @@
 name: Docker Update CI
+
 on:
   schedule:
     - cron:  '0 0 * * 2'
   workflow_dispatch:
-#  push:
-#    branches: [ master ]
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**/README.md'
+      - '**/package_versions.txt'
+      - '**/.github/workflows/docker-update.yml'
 
 jobs:
   build:
