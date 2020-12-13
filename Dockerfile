@@ -7,8 +7,6 @@ LABEL build_version="hydaz version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
 RUN \
- echo "**** Update Base Image Packages ****" && \
- apk upgrade --no-cache && \
   echo "**** install build packages ****" && \
   apk add --no-cache \
  	logrotate \
