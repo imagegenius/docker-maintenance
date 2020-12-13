@@ -28,7 +28,7 @@ done
 
 if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
   nginx -t -c /config/nginx/nginx.conf
-  echo "[cont-init.d] 20-config: NGINX test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
+  echo "[cont-init.d] 20-config: Nginx test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
   sleep infinity
 fi
 
