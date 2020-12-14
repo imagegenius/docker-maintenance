@@ -2,7 +2,7 @@ name: Docker Update CI
 
 on:
   schedule:
-    - cron:  '20 0 * * 0'
+    - cron:  '10 0 * * 0'
   workflow_dispatch:
   push:
     branches:
@@ -17,32 +17,52 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
+
     - name: Set Enviroment Variables
+      id: variables
+      env:
+        GIT_USER: hydazz
+        GIT_REPO: docker-maintenance
+        GIT_BRANCH: main
+        DOCKERHUB_IMAGE: vcxpz/maintenance
+        DOCKERIMAGE_TAG: latest
       run: |
         mkdir /tmp/workdir
-        # This may not be a pretty way to set env variables but it works
-        echo "hydazz" >/tmp/workdir/GH_USER
-        echo "docker-maintenance" >/tmp/workdir/GH_REPO
-        echo "vcxpz/maintenance" >/tmp/workdir/DOCKERHUB_IMAGE
-        # Set the user below to $(cat /tmp/workdir/GH_USER) or manually set it
-        echo "$(curl --silent "https://api.github.com/repos/$(cat /tmp/workdir/GH_USER)/$(cat /tmp/workdir/GH_REPO)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" >/tmp/workdir/version
+        echo "::set-output name=GIT_USER::$GIT_USER"
+        echo "::set-output name=GIT_REPO::$GIT_REPO"
+        echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
+        echo "::set-output name=DOCKERHUB_IMAGE::$DOCKERHUB_IMAGE"
+        echo "::set-output name=DOCKERIMAGE_TAG::$DOCKERIMAGE_TAG"
+        VERSION="$(curl --silent "https://api.github.com/repos/linuxserver/$GIT_REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+        echo "::set-output name=VERSION::$VERSION"
+
     - name: Docker Login
       env:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         echo $DOCKER_PASSWORD | docker login -u vcxpz --password-stdin
+
     - name: Build the Docker image
+      env:
+        VERSION: ${{ steps.variables.outputs.VERSION }}
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
       run: |
-        docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="$(cat /tmp/workdir/version)" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag $(cat /tmp/workdir/DOCKERHUB_IMAGE):cibuild
+        docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag "$DOCKERHUB_IMAGE":cibuild
+
     - name: Compare package_versions.txt
       id: packages
+      env:
+        GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
+        GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
+        GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE}}
       run: |
-        docker run --rm --entrypoint '/bin/sh' -v /tmp/workdir:/tmp "$(cat /tmp/workdir/DOCKERHUB_IMAGE)":cibuild -c '\
+        docker run --rm --entrypoint '/bin/sh' -v /tmp/workdir:/tmp "$DOCKERHUB_IMAGE":cibuild -c '\
             apk info -v > /tmp/package_versions.txt && \
             sort -o /tmp/package_versions.txt /tmp/package_versions.txt && \
             chmod 777 /tmp/package_versions.txt'
-        git clone https://github.com/"$(cat /tmp/workdir/GH_USER)"/"$(cat /tmp/workdir/GH_REPO)".git /tmp/workdir/"$(cat /tmp/workdir/GH_REPO)"
-        cd /tmp/workdir/"$(cat /tmp/workdir/GH_REPO)"
+        git clone -b $GIT_BRANCH https://github.com/"$GIT_USER"/"$GIT_REPO".git /tmp/workdir/"$GIT_REPO"
+        cd /tmp/workdir/"$GIT_REPO"
         if [ ! -f package_versions.txt ]; then \
           touch package_versions.txt; \
         fi
@@ -50,25 +70,36 @@ jobs:
         echo "::set-output name=OLD::$OLD"
         NEW="$(md5sum /tmp/workdir/package_versions.txt | awk '{ print $1 }')"
         echo "::set-output name=NEW::$NEW"
+
     - name: Push New packaage_versions.txt
       if: steps.packages.outputs.NEW != steps.packages.outputs.OLD
       env:
+        GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
+        GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
+        GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
         GIT_KEY: ${{ secrets.GIT_KEY }}
       run: |
-        cd /tmp/workdir/"$(cat /tmp/workdir/GH_REPO)"/
+        cd /tmp/workdir/"$GIT_REPO"/
         rm package_versions.txt
         mv /tmp/workdir/package_versions.txt package_versions.txt
         git config --global user.email "alexanderhyde@icloud.com"
-        git config --global user.name "hydazz"
+        git config --global user.name "$GIT_USER"
         git add package_versions.txt
         git commit -m 'Bot Updating Package Versions'
-        git push https://"$(cat /tmp/workdir/GH_USER)":$GIT_KEY@github.com/"$(cat /tmp/workdir/GH_USER)"/"$(cat /tmp/workdir/GH_REPO)".git --all
+        git push https://"$GIT_USER":"$GIT_KEY"@github.com/"$GIT_USER"/"$GIT_REPO".git $GIT_BRANCH
+
     - name: Tag And Push Docker Image
+      env:
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+        DOCKERIMAGE_TAG: ${{ steps.variables.outputs.DOCKERIMAGE_TAG }}
       run: |
-        # Tag and push Docker image to Docker hub
-        docker tag $(cat /tmp/workdir/DOCKERHUB_IMAGE):cibuild $(cat /tmp/workdir/DOCKERHUB_IMAGE):latest
-        docker push $(cat /tmp/workdir/DOCKERHUB_IMAGE):latest
+        docker tag "$DOCKERHUB_IMAGE":cibuild "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
+        docker push "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
+
     - name: Cleanup
+      env:
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+        DOCKERIMAGE_TAG: ${{ steps.variables.outputs.DOCKERIMAGE_TAG }}
       run: |
-        docker image rm -f "$(cat /tmp/workdir/DOCKERHUB_IMAGE)":latest
+        docker image rm -f "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
         rm -rf /tmp/workdir
