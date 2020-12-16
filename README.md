@@ -7,6 +7,7 @@ Barebones Nginx server (~25mb) specifically made to be a maintenance page for wh
 | Alpine | Edge |
 | Nginx | 1.18.0 |
 | s6-overlay | 2.1.0.2 |
+
 *See *package_versions.txt* for more detail
 
 ## Usage
