@@ -1,4 +1,5 @@
-Barebones Nginx server specifically made to be a maintenance page for when your SWAG container is down. Theoretically, when you stop your SWAG container and spin this one up, it should just work. When you startup this image it will attempt to migrate (create symlinks) from SWAG, and it works for me so whatever. You may need to change some settings in your configs for Nginx to start successfully
+## Tiny Maintenance Webserver
+Barebones Nginx server (~25mb) specifically made to be a maintenance page for when your SWAG container is down, or backing up. Theoretically, when you stop your SWAG container and spin this one up, it should just work. When you startup this image it will attempt to migrate (create symlinks) from SWAG, and it works for me so whatever. You may need to change some settings in your configs for Nginx to start successfully.
 
 ## Version Information
 | Name | Version |
@@ -6,6 +7,7 @@ Barebones Nginx server specifically made to be a maintenance page for when your 
 | Alpine | Edge |
 | Nginx | 1.18.0 |
 | s6-overlay | 2.1.0.2 |
+*See *package_versions.txt* for more detail
 
 ## Usage
 
