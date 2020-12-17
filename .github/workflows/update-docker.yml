@@ -2,7 +2,7 @@ name: Docker Update CI
 
 on:
   schedule:
-    - cron:  '10 0 * * 0'
+    - cron:  '5 0 * * 0'
   workflow_dispatch:
   push:
     branches:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
@@ -27,14 +27,12 @@ jobs:
         DOCKERHUB_IMAGE: vcxpz/maintenance
         DOCKERIMAGE_TAG: latest
       run: |
-        mkdir /tmp/workdir
         echo "::set-output name=GIT_USER::$GIT_USER"
         echo "::set-output name=GIT_REPO::$GIT_REPO"
         echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
         echo "::set-output name=DOCKERHUB_IMAGE::$DOCKERHUB_IMAGE"
         echo "::set-output name=DOCKERIMAGE_TAG::$DOCKERIMAGE_TAG"
-        VERSION="$(curl --silent "https://api.github.com/repos/linuxserver/$GIT_REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
-        echo "::set-output name=VERSION::$VERSION"
+        echo "::set-output name=VERSION::$(curl --silent "https://api.github.com/repos/linuxserver/$GIT_REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 
     - name: Docker Login
       env:
@@ -49,30 +47,30 @@ jobs:
       run: |
         docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag "$DOCKERHUB_IMAGE":cibuild
 
-    - name: Compare package_versions.txt
-      id: packages
+    - name: Get The Goods From The Image
       env:
         GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
         GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
         GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
-        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE}}
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
       run: |
+        mkdir /tmp/workdir
         docker run --rm --entrypoint '/bin/sh' -v /tmp/workdir:/tmp "$DOCKERHUB_IMAGE":cibuild -c '\
-            apk info -v > /tmp/package_versions.txt && \
-            sort -o /tmp/package_versions.txt /tmp/package_versions.txt && \
-            chmod 777 /tmp/package_versions.txt'
+            apk info -v | sort >/tmp/package_versions.txt'
         git clone -b $GIT_BRANCH https://github.com/"$GIT_USER"/"$GIT_REPO".git /tmp/workdir/"$GIT_REPO"
         cd /tmp/workdir/"$GIT_REPO"
         if [ ! -f package_versions.txt ]; then \
           touch package_versions.txt; \
         fi
-        OLD="$(md5sum package_versions.txt | awk '{ print $1 }')"
-        echo "::set-output name=OLD::$OLD"
-        NEW="$(md5sum /tmp/workdir/package_versions.txt | awk '{ print $1 }')"
-        echo "::set-output name=NEW::$NEW"
 
-    - name: Push New packaage_versions.txt
-      if: steps.packages.outputs.NEW != steps.packages.outputs.OLD
+    - name: Set MD5 Variables
+      id: md5
+      run: |
+        echo "::set-output name=PACKAGES_OLD_MD5::$(md5sum package_versions.txt | awk '{ print $1 }')"
+        echo "::set-output name=PACKAGES_NEW_MD5::$(md5sum /tmp/workdir/package_versions.txt | awk '{ print $1 }')"
+
+    - name: Push Changes To Github
+      if: steps.md5.outputs.PACKAGES_NEW_MD5 != steps.md5.outputs.PACKAGES_NEW_MD5
       env:
         GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
         GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
@@ -95,11 +93,3 @@ jobs:
       run: |
         docker tag "$DOCKERHUB_IMAGE":cibuild "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
         docker push "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
-
-    - name: Cleanup
-      env:
-        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
-        DOCKERIMAGE_TAG: ${{ steps.variables.outputs.DOCKERIMAGE_TAG }}
-      run: |
-        docker image rm -f "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
-        rm -rf /tmp/workdir
