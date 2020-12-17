@@ -10,8 +10,7 @@ RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
  	logrotate \
- 	nginx \
-  nginx-mod-http-headers-more && \
+ 	nginx && \
   echo "**** configure nginx ****" && \
   rm -f /etc/nginx/conf.d/default.conf && \
   echo "**** fix logrotate ****" && \
