@@ -21,7 +21,6 @@ musl-utils-1.2.2_pre6-r0
 ncurses-libs-6.2_p20201212-r0
 ncurses-terminfo-base-6.2_p20201212-r0
 nginx-1.18.0-r10
-nginx-mod-http-headers-more-1.18.0-r10
 pcre-8.44-r0
 popt-1.18-r0
 procps-3.3.16-r0
