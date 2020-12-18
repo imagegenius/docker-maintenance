@@ -70,7 +70,7 @@ jobs:
         echo "::set-output name=PACKAGES_NEW_MD5::$(md5sum /tmp/workdir/package_versions.txt | awk '{ print $1 }')"
 
     - name: Push Changes To Github
-      if: steps.md5.outputs.PACKAGES_NEW_MD5 != steps.md5.outputs.PACKAGES_NEW_MD5
+      if: steps.md5.outputs.PACKAGES_OLD_MD5 != steps.md5.outputs.PACKAGES_NEW_MD5
       env:
         GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
         GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
