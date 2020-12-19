@@ -3,7 +3,7 @@ FROM vcxpz/baseimage-alpine
 # Set Arguments
 ARG BUILD_DATE
 ARG VERSION
-LABEL build_version="hydaz version: ${VERSION} Build-date: ${BUILD_DATE}"
+LABEL build_version="Version:- ${VERSION} Build date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
 RUN \
