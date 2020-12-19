@@ -14,17 +14,6 @@ libintl-0.20.2-r0
 libproc-3.3.16-r0
 libssl1.1-1.1.1i-r0
 libtls-standalone-2.9.1-r1
-linux-pam-1.4.0-r1
-logrotate-3.17.0-r0
-musl-1.2.2_pre6-r0
-musl-utils-1.2.2_pre6-r0
-ncurses-libs-6.2_p20201212-r0
-ncurses-terminfo-base-6.2_p20201212-r0
-nginx-1.18.0-r10
-pcre-8.44-r0
-popt-1.18-r0
-procps-3.3.16-r0
-readline-8.0.4-r0
 s6-ipcserver-2.9.2.0-r1
 scanelf-1.2.6-r1
 shadow-4.8.1-r0
