@@ -13,7 +13,6 @@ jobs:
     - name: Set Enviroment Variables
       id: variables
       env:
-        # Changes these
         GIT_USER: hydazz
         GIT_REPO: docker-maintenance
         GIT_BRANCH: main
@@ -44,7 +43,6 @@ jobs:
       env:
         VERSION: ${{ steps.variables.outputs.VERSION }}
         DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
-        OVERLAY_VERSION: ${{ steps.variables.outputs.OVERLAY_VERSION }}
       run: |
         docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag "$DOCKERHUB_IMAGE":cibuild
 
