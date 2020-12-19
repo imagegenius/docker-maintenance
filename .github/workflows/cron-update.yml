@@ -1,0 +1,118 @@
+name: Cron Update CI
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  amd64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set Enviroment Variables
+      id: variables
+      env:
+        # Changes these
+        GIT_USER: hydazz
+        GIT_REPO: docker-maintenance
+        GIT_BRANCH: main
+        DOCKERHUB_IMAGE: vcxpz/maintenance
+        DOCKERIMAGE_TAG: latestst
+      run: |
+        echo "::set-output name=GIT_USER::$GIT_USER"
+        echo "::set-output name=GIT_REPO::$GIT_REPO"
+        echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
+        echo "::set-output name=DOCKERHUB_IMAGE::$DOCKERHUB_IMAGE"
+        echo "::set-output name=DOCKERIMAGE_TAG::$DOCKERIMAGE_TAG"
+        echo "::set-output name=VERSION::$(curl -sX GET "https://api.github.com/repos/linuxserver/$GIT_REPO/releases/latest" | jq -r .tag_name)"
+
+    - name: Docker Login
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo $DOCKER_PASSWORD | docker login -u vcxpz --password-stdin
+
+    - name: Github Login
+      env:
+        GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
+      run: |
+        git config --global user.email "alexanderhyde@icloud.com"
+        git config --global user.name "$GIT_USER"
+
+    - name: Build The Docker Image
+      env:
+        VERSION: ${{ steps.variables.outputs.VERSION }}
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+        OVERLAY_VERSION: ${{ steps.variables.outputs.OVERLAY_VERSION }}
+      run: |
+        docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="$VERSION" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag "$DOCKERHUB_IMAGE":cibuild
+
+    - name: Get New Package Versions From Image
+      id: packages
+      env:
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+      run: |
+        echo "::set-output name=OLD_MD5::$(md5sum package_versions.txt | awk '{ print $1 }')"
+        docker run --rm --entrypoint '/bin/sh' -v "$PWD":/tmp "$DOCKERHUB_IMAGE":cibuild -c '\
+          apk info -v | sort >/tmp/package_versions.txt'
+        echo "::set-output name=NEW_MD5::$(md5sum package_versions.txt | awk '{ print $1 }')"
+
+    - name: Update README.md
+      id: readme
+      run: |
+        echo "::set-output name=OLD_MD5::$(md5sum README.md | awk '{ print $1 }')"
+        OVERLAY_VERSION=$(curl -sX GET "https://raw.githubusercontent.com/hydazz/docker-baseimage-alpine/main/version_info.json" | jq -r .overlay_version)
+        NGINX_VERSION=$(cat package_versions.txt | grep -E "nginx.*?-" | sed -n 1p | cut -c 7- | sed -E 's/-r.*//g')
+        OLD_OVERLAY_VERSION=$(cat version_info.json | jq -r .overlay_version)
+        OLD_NGINX_VERSION=$(cat version_info.json | jq -r .nginx_version)
+        sed -i \
+          -e "s/${OLD_OVERLAY_VERSION}/${OVERLAY_VERSION}/g" \
+          -e "s/${OLD_NGINX_VERSION}/${NGINX_VERSION}/g" \
+          README.md
+        printf '{\n"overlay_version": "'${OVERLAY_VERSION}'",\n"nginx_version": "'${NGINX_VERSION}'"\n}' >version_info.json
+        echo "::set-output name=NEW_MD5::$(md5sum README.md | awk '{ print $1 }')"
+
+    - name: Stage README.md Changes
+      if: steps.readme.outputs.OLD_MD5 != steps.readme.outputs.NEW_MD5
+      id: push_readme
+      run: |
+        git add README.md
+        git commit -m 'Bot Updating README' README.md
+        git add version_info.json
+        git commit -m 'Bot Updating Version Info' version_info.json
+        echo "::set-output name=COMMIT::1"
+
+    - name: Stage package_versions.txt Changes
+      if: steps.packages.outputs.OLD_MD5 != steps.packages.outputs.NEW_MD5
+      id: push_packageversions
+      run: |
+        git add package_versions.txt
+        git commit -m 'Bot Updating Package Versions' package_versions.txt
+        echo "::set-output name=COMMIT::1"
+
+    - name: Push Changes To Github
+      if: steps.push_packageversions.outputs.COMMIT == 1 || steps.push_readme.outputs.COMMIT == 1
+      env:
+        GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
+        GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
+        GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
+        GIT_KEY: ${{ secrets.GIT_KEY }}
+      run: |
+        git push https://"$GIT_USER":"$GIT_KEY"@github.com/"$GIT_USER"/"$GIT_REPO".git $GIT_BRANCH
+
+    - name: Push Changes To Docker Hub
+      uses: peter-evans/dockerhub-description@v2
+      with:
+        username: vcxpz
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+
+    - name: Tag And Push Docker Image
+      if: steps.push_packageversions.outputs.COMMIT == 1
+      env:
+        DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
+        DOCKERIMAGE_TAG: ${{ steps.variables.outputs.DOCKERIMAGE_TAG }}
+      run: |
+        docker tag "$DOCKERHUB_IMAGE":cibuild "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
+        docker push "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
