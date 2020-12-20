@@ -24,7 +24,7 @@ jobs:
         echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
         echo "::set-output name=DOCKERHUB_IMAGE::$DOCKERHUB_IMAGE"
         echo "::set-output name=DOCKERIMAGE_TAG::$DOCKERIMAGE_TAG"
-        echo "::set-output name=VERSION::$(curl -sX GET "https://api.github.com/repos/linuxserver/$GIT_REPO/releases/latest" | jq -r .tag_name)"
+        echo "::set-output name=VERSION::$(curl -sX GET "https://api.github.com/repos/hydazz/$GIT_REPO/releases/latest" | jq -r .tag_name)"
 
     - name: Docker Login
       env:
