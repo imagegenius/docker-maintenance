@@ -9,7 +9,7 @@ cp -f /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
 
 # modify swag configs
 sed -i \
-  -e 's/root .*;/root \/config\/public_html\/;/g' \
+  -e 's/root .*;/root \/config\/www\/;/g' \
   -e 's/index .*;/index index.html;/g' \
   /config/nginx/site-confs/*
 
@@ -38,5 +38,5 @@ chown -R abc:abc \
   /var/lib/nginx \
   /var/tmp/nginx
 chmod -R g+w \
-  /config/{nginx,public_html}
+  /config/{nginx,www}
 chmod -R 644 /etc/logrotate.d

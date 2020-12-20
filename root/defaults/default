@@ -20,7 +20,7 @@ server {
      access_log /config/log/nginx/access.log;
      error_log /config/log/nginx/error.log;
 
-     root /config/public_html/;
+     root /config/www/;
      index index.html;
 
      include /config/nginx/proxy-confs/*.subfolder.conf;

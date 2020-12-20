@@ -31,12 +31,3 @@ This only works for files within the nginx directory!
 Restart the container when you are done"
   sleep infinity
 fi
-
-# permissions
-chown -R abc:abc \
-  /config \
-  /var/lib/nginx \
-  /var/tmp/nginx
-chmod -R g+w \
-  /config/{nginx,www}
-chmod -R 644 /etc/logrotate.d
