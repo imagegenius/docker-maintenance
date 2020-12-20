@@ -106,13 +106,6 @@ jobs:
       run: |
         git push https://"$GIT_USER":"$GIT_KEY"@github.com/"$GIT_USER"/"$GIT_REPO".git $GIT_BRANCH
 
-    - name: Push Changes To Docker Hub
-      uses: peter-evans/dockerhub-description@v2
-      with:
-        username: vcxpz
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
-
     - name: Tag And Push Docker Image
       env:
         DOCKERHUB_IMAGE: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
@@ -120,3 +113,10 @@ jobs:
       run: |
         docker tag "$DOCKERHUB_IMAGE":cibuild "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
         docker push "$DOCKERHUB_IMAGE":"$DOCKERIMAGE_TAG"
+
+    - name: Push README.md To Docker Hub
+      uses: peter-evans/dockerhub-description@v2
+      with:
+        username: vcxpz
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: ${{ steps.variables.outputs.DOCKERHUB_IMAGE }}
