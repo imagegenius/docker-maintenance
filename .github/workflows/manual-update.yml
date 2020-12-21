@@ -87,7 +87,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git add -A
-        git commit -m 'Bot Updating Files' -A
+        git commit -m 'Bot Updating Files'
         git push https://"$GIT_USER":"$GITHUB_TOKEN"@github.com/"$GIT_USER"/"$GIT_REPO".git $GIT_BRANCH
 
     - name: Tag And Push Docker Image
