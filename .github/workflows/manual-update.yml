@@ -75,7 +75,7 @@ jobs:
           -e "s/${OLD_OVERLAY_VERSION}/${OVERLAY_VERSION}/g" \
           -e "s/${OLD_NGINX_VERSION}/${NGINX_VERSION}/g" \
           README.md
-        printf '{\n"overlay_version": "'${OVERLAY_VERSION}'",\n"nginx_version": "'${NGINX_VERSION}'"\n}\n' >version_info.json
+        printf '{\n"overlay_version": "'${OVERLAY_VERSION}'",\n"nginx_version": "'${NGINX_VERSION}'"\n}' >version_info.json
         echo "::set-output name=NEW_MD5::$(md5sum README.md | awk '{ print $1 }')"
 
     - name: Commit And Push Changes To Github
