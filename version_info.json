@@ -1,4 +1,4 @@
 {
-"overlay_version": "overlayversion",
-"nginx_version": "nginxversion"
+  "overlay_version": "2.1.0.2",
+  "nginx_version": "1.18.0"
 }
