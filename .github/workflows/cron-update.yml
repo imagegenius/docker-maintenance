@@ -60,15 +60,7 @@ jobs:
       id: readme
       run: |
         echo "::set-output name=OLD_MD5::$(md5sum README.md | awk '{ print $1 }')"
-        OVERLAY_VERSION=$(curl -sX GET "https://raw.githubusercontent.com/hydazz/docker-baseimage-alpine/main/version_info.json" | jq -r .overlay_version)
-        NGINX_VERSION=$(cat package_versions.txt | grep -E "nginx.*?-" | sed -n 1p | cut -c 7- | sed -E 's/-r.*//g')
-        OLD_OVERLAY_VERSION=$(cat version_info.json | jq -r .overlay_version)
-        OLD_NGINX_VERSION=$(cat version_info.json | jq -r .nginx_version)
-        sed -i \
-          -e "s/${OLD_OVERLAY_VERSION}/${OVERLAY_VERSION}/g" \
-          -e "s/${OLD_NGINX_VERSION}/${NGINX_VERSION}/g" \
-          README.md
-        printf '{\n"overlay_version": "'${OVERLAY_VERSION}'",\n"nginx_version": "'${NGINX_VERSION}'"\n}' >version_info.json
+        chmod +x update_version_info.sh && ./update_version_info.sh
         echo "::set-output name=NEW_MD5::$(md5sum README.md | awk '{ print $1 }')"
 
     - name: Commit And Push Changes To Github
