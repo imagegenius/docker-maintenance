@@ -2,7 +2,7 @@ name: Cron Update CI
 
 on:
   schedule:
-    - cron: "5 11 * * *"
+    - cron: "5 11 * * 0"
 
 jobs:
   amd64:
