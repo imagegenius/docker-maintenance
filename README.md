@@ -19,7 +19,7 @@ docker run -d \
   -p 443:443 \
   -p 80:80 \
   -v <path to appdata>:/config \
-  -v <path to swag data/>:/swag \
+  -v <path to swag data>:/swag \
   --restart unless-stopped \
   vcxpz/maintenance
 ```
