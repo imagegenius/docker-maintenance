@@ -8,7 +8,7 @@ LABEL maintainer="Alex Hyde"
 
 RUN \
    echo "**** install runtime packages ****" && \
-   apk add --no-cache \
+   apk add --no-cache --upgrade \
       logrotate \
       nginx && \
    echo "**** configure nginx ****" && \
