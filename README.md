@@ -14,7 +14,6 @@ If you have important proxy-confs, such as Home Assistant that you need to have 
 ```
 docker run -d \
   --name=maintenance \
-  --cap-add=NET_ADMIN \
   -e PUID=1000 \
   -e PGID=1000 \
   -e TZ=Australia/Melbourne \
