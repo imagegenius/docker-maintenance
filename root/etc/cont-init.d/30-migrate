@@ -17,8 +17,8 @@ sed -i \
 sed -i \
   -e '/access_log.*/d' \
   -e '/error_log.*/d' \
-  -e '/include.*nginx.conf;/d' \ # for w3 total cache on wordpress
-  /config/nginx/site-confs/*
+  -e '/include.*nginx.conf;/d' \
+/config/nginx/site-confs/*
 
 for includes in $(cat /config/includes.txt); do
   if [ ! -f /config/nginx/"$includes" ]; then
