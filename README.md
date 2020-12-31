@@ -24,7 +24,7 @@ docker run -d \
   --restart unless-stopped \
   vcxpz/maintenance
 ```
-On Unraid? There's a [template](https://github.com/hydazz/docker-templates/blob/main/hydaz/maintenance.xml)
+On Unraid? There's a [template](https://github.com/hydazz/docker-templates/blob/main/hydaz/Maintenance.xml)
 
 ## Todo
 * Nothing, everything works 🙂
