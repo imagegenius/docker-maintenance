@@ -5,7 +5,7 @@
   ln -s /swag/keys /config/keys
 
 # migrate SWAG configs
-cp -f /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
+cp /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
 
 # modify swag configs
 sed -i \
@@ -17,7 +17,7 @@ sed -i \
 sed -i \
   -e '/access_log.*/d' \
   -e '/error_log.*/d' \
-  -e '/include.*nginx.conf;/d' \
+  -e '/include.*nginx.conf;/d' \ # for w3 total cache on wordpress
   /config/nginx/site-confs/*
 
 for includes in $(cat /config/includes.txt); do
