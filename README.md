@@ -1,5 +1,5 @@
 ## Tiny Maintenance Webserver
-Barebones Nginx server specifically made to be a maintenance page for when your SWAG container is down or backing up. Theoretically, when you stop your SWAG container and spin this one up, it should just work. When you startup this image it will attempt to migrate (create symlinks) from SWAG, and it works for me so whatever. You may need to change some settings in your configs for Nginx to start successfully.
+Barebones Nginx server specifically made to be a maintenance page for when your SWAG container is down or backing up. Theoretically, when you stop your SWAG container and spin this one up, it should just work. When you startup this image it will attempt to migrate from SWAG, and it works for me so whatever. You may need to change some settings in your configs for Nginx to start successfully.
 
 [![template](https://img.shields.io/badge/view_html_template-blue?style=for-the-badge)](https://htmlpreview.github.io/?https://github.com/hydazz/docker-maintenance/blob/main/root/defaults/index.html)
 

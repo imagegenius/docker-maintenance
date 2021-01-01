@@ -22,7 +22,7 @@ sed -i \
 
 for includes in $(cat /config/includes.txt); do
   if [ ! -f /config/nginx/"$includes" ]; then
-    ln -s /swag/nginx/"$includes" /config/nginx/"$includes"
+    cp -f /swag/nginx/"$includes" /config/nginx/"$includes"
   fi
 done
 
