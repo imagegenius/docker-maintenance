@@ -5,7 +5,7 @@
   ln -s /swag/keys /config/keys
 
 # migrate SWAG configs
-cp /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
+cp -n /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
 
 # modify swag configs
 sed -i \
@@ -18,7 +18,7 @@ sed -i \
   -e '/access_log.*/d' \
   -e '/error_log.*/d' \
   -e '/include.*nginx.conf;/d' \
-/config/nginx/site-confs/*
+  /config/nginx/site-confs/*
 
 for includes in $(cat /config/includes.txt); do
   if [ ! -f /config/nginx/"$includes" ]; then
@@ -28,7 +28,7 @@ done
 
 if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
   nginx -t -c /config/nginx/nginx.conf
-  echo "[cont-init.d] 20-config: Nginx test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
+  echo "[cont-init.d] 30-config: Nginx test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
   sleep infinity
 fi
 
