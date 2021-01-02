@@ -18,18 +18,12 @@ jobs:
       - name: Set Enviroment Variables
         id: variables
         env:
-          GIT_USER: hydazz
-          GIT_REPO: docker-maintenance
-          GIT_BRANCH: main
           DOCKERHUB_IMAGE: vcxpz/maintenance
           DOCKERIMAGE_TAG: latest
         run: |
-          echo "::set-output name=GIT_USER::$GIT_USER"
-          echo "::set-output name=GIT_REPO::$GIT_REPO"
-          echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
           echo "::set-output name=DOCKERHUB_IMAGE::$DOCKERHUB_IMAGE"
           echo "::set-output name=DOCKERIMAGE_TAG::$DOCKERIMAGE_TAG"
-          echo "::set-output name=VERSION::$(curl -sX GET "https://api.github.com/repos/hydazz/$GIT_REPO/releases/latest" | jq -r .tag_name)"
+          echo "::set-output name=VERSION::$(curl -sX GET "https://api.github.com/repos/hydazz/docker-maintenance/releases/latest" | jq -r .tag_name)"
 
       - name: Docker Login
         env:
@@ -42,7 +36,7 @@ jobs:
           GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
         run: |
           git config --global user.email "alexanderhyde@icloud.com"
-          git config --global user.name "$GIT_USER"
+          git config --global user.name "hydazz"
 
       - name: Build The Docker Image
         env:
@@ -70,15 +64,10 @@ jobs:
 
       - name: Commit And Push Changes To Github
         if: steps.readme.outputs.OLD_MD5 != steps.readme.outputs.NEW_MD5 || steps.packages.outputs.OLD_MD5 != steps.packages.outputs.NEW_MD5
-        env:
-          GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
-          GIT_REPO: ${{ steps.variables.outputs.GIT_REPO }}
-          GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git add -A
           git commit -m 'Bot Updating Files'
-          git push https://"$GIT_USER":"$GITHUB_TOKEN"@github.com/"$GIT_USER"/"$GIT_REPO".git $GIT_BRANCH
+          git push
 
       - name: Tag And Push Docker Image
         env:
