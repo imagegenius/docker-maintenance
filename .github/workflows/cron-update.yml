@@ -31,7 +31,7 @@ jobs:
           GIT_USER: ${{ steps.variables.outputs.GIT_USER }}
         run: |
           git config --global user.email "alexanderhyde@icloud.com"
-          git config --global user.name "$GIT_USER"
+          git config --global user.name "hydazz"
 
       - name: Build The Docker Image
         env:
