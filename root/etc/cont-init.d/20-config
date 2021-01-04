@@ -26,7 +26,7 @@ if [ ! -f /config/includes.txt ]; then
 	echo "proxy.conf
 ssl.conf
 dhparams.pem" >/config/includes.txt
-	echo "Add a list of includes in the /config/includes.txt file to migrate over from SWAG. Relative to the Nginx folder within the appdata folder. i.e. use sample.conf instead of /config/nginx/sample.conf.
+	echo "Warning: Add a list of files in the /config/includes.txt file to migrate over from SWAG. Relative to the Nginx folder within the appdata folder. i.e. use sample.conf instead of /config/nginx/sample.conf.
 This is useful if you have any includes in your Nginx configs but also works for any folder/file within the Nginx folder.
 This only works for files within the nginx directory!
 Restart the container when you are done"
