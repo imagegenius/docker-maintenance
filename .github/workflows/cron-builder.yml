@@ -1,4 +1,4 @@
-name: Cron Update CI
+name: Cron Builder CI
 
 on:
   schedule:

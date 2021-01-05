@@ -1,4 +1,4 @@
-name: Manual Update CI
+name: Manual Builder CI
 
 on:
   workflow_dispatch:
