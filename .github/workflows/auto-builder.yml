@@ -39,6 +39,8 @@ jobs:
           git config --global user.name "github-actions"
 
       - name: Build The Docker Image
+        env:
+          VERSION: ${{ steps.variables.outputs.VERSION }}
         run: |
           docker build --no-cache --pull . --file Dockerfile --build-arg VERSION="${VERSION}" --build-arg BUILD_DATE="$(date +%Y-%m-%d)" --tag ${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}:cibuild
 
