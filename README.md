@@ -24,4 +24,4 @@ docker run -d \
   --restart unless-stopped \
   vcxpz/maintenance
 ```
-On Unraid? There's a [template](https://github.com/hydazz/docker-templates/blob/main/hydaz/maintenance.xml)
+[![auto build](https://img.shields.io/badge/unraid_template-ff8c2f?style=for-the-badge&logo=docker?color=d1aa67)](https://github.com/hydazz/docker-templates/blob/main/hydaz/maintenance.xml)
