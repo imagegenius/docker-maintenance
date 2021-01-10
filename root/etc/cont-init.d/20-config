@@ -1,5 +1,10 @@
 #!/usr/bin/with-contenv bash
 
+# Echo init finish for test runs
+if [ -n "${TEST_RUN}" ]; then
+	echo '[services.d] done.'
+fi
+
 if [ ! -d /swag ]; then
 	echo "SWAG appdata is not mounted to /swag, this image is intended to be used with SWAG and startup errors will occur if its appdata not mounted."
 	echo "Please re-start the container with SWAG appdata mounted to /swag"
