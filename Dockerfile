@@ -6,7 +6,7 @@ ARG VERSION
 LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
-RUN set -x && \
+RUN set -xe && \
    echo "**** install runtime packages ****" && \
    apk add --no-cache --upgrade \
       logrotate \
