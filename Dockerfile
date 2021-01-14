@@ -1,4 +1,4 @@
-FROM vcxpz/baseimage-alpine
+FROM vcxpz/baseimage-alpine:latest
 
 # Set Arguments
 ARG BUILD_DATE

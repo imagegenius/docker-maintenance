@@ -1,10 +1,10 @@
 #!/bin/bash
 
 OVERLAY_VERSION=$(curl -sX GET "https://raw.githubusercontent.com/hydazz/docker-baseimage-alpine/main/version_info.json" | jq -r .overlay_version)
-NGINX_VERSION=$(cat package_versions.txt | grep -E "nginx.*?-" | sed -n 1p | cut -c 7- | sed -E 's/-r.*//g')
+NGINX_VERSION=$(grep <package_versions.txt -E "nginx.*?-" | sed -n 1p | cut -c 7- | sed -E 's/-r.*//g')
 
-OLD_OVERLAY_VERSION=$(cat version_info.json | jq -r .overlay_version)
-OLD_NGINX_VERSION=$(cat version_info.json | jq -r .nginx_version)
+OLD_OVERLAY_VERSION=$(jq <version_info.json -r .overlay_version)
+OLD_NGINX_VERSION=$(jq <version_info.json -r .nginx_version)
 
 sed -i \
 	-e "s/${OLD_OVERLAY_VERSION}/${OVERLAY_VERSION}/g" \
