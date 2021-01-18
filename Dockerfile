@@ -2,8 +2,8 @@ FROM vcxpz/baseimage-alpine:latest
 
 # Set Arguments
 ARG BUILD_DATE
-ARG MAINTENANCE_RELEASE
-LABEL build_version="Version:- ${MAINTENANCE_RELEASE} Build-date:- ${BUILD_DATE}"
+ARG VERSION
+LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
 RUN set -xe && \
