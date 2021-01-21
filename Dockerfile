@@ -19,13 +19,13 @@ RUN \
    sed -i 's#/usr/sbin/logrotate /etc/logrotate.conf#/usr/sbin/logrotate /etc/logrotate.conf -s /config/log/logrotate.status#g' \
      /etc/periodic/daily/logrotate
 
- # add local files
- COPY root/ /
+# add local files
+COPY root/ /
 
- # nginx healthcheck
- HEALTHCHECK --start-period=10s --timeout=5s \
+# http healthcheck
+HEALTHCHECK --start-period=10s --timeout=5s \
    CMD wget -qO /dev/null 'http://localhost' || exit 1
 
- # ports and volumes
- EXPOSE 80 443
- VOLUME /config
+# ports and volumes
+EXPOSE 80 443
+VOLUME /config
