@@ -24,7 +24,7 @@ RUN \
 
  # nginx healthcheck
  HEALTHCHECK --start-period=10s --timeout=5s \
-   CMD nginx -t -c /config/nginx/nginx.conf || exit 1
+   CMD wget -qO /dev/null 'http://localhost' || exit 1
 
  # ports and volumes
  EXPOSE 80 443

@@ -5,15 +5,22 @@
 	ln -s /swag/keys /config/keys
 
 # migrate SWAG configs
-cp -n /swag/nginx/site-confs/* /config/nginx/site-confs/ >/dev/null 2>&1
+cp -n \
+	/swag/nginx/site-confs/* \
+	/config/nginx/site-confs/ >/dev/null 2>&1
 
-# modify swag configs
+# set root and index
 sed -i \
 	-e 's/root .*;/root \/config\/www\/;/g' \
 	-e 's/index .*;/index index.html;/g' \
 	/config/nginx/site-confs/*
 
-# remove unneeded lines
+# fix autoindex
+sed -i \
+	-e 's/autoindex index.html;/autoindex off;/g' \
+	/config/nginx/site-confs/*
+
+# remove logs and potential linked w3 total cache confs
 sed -i \
 	-e '/access_log.*/d' \
 	-e '/error_log.*/d' \

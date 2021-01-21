@@ -1,10 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-# Echo init finish for test runs
-if [ -n "${TEST_RUN}" ]; then
-	echo '[services.d] done.'
-fi
-
 if [ ! -d /swag ]; then
 	echo "SWAG appdata is not mounted to /swag, this image is intended to be used with SWAG and startup errors will occur if its appdata not mounted."
 	echo "Please re-start the container with SWAG appdata mounted to /swag"
@@ -28,10 +23,8 @@ if ! ls -1qA /config/www/ | grep -q .; then
 fi
 
 if [ ! -f /config/includes.txt ]; then
-	echo "proxy.conf
-ssl.conf
-dhparams.pem" >/config/includes.txt
-	echo "Warning: Add a list of files in the /config/includes.txt file to migrate over from SWAG. Relative to the Nginx folder within the appdata folder. i.e. use sample.conf instead of /config/nginx/sample.conf.
+	printf "proxy.conf\nssl.conf\ndhparams.pem" >/config/includes.txt
+	echo "Add a list of files in the /config/includes.txt file to migrate over from SWAG. Relative to the Nginx folder within the appdata folder. i.e. use sample.conf instead of /config/nginx/sample.conf.
 This is useful if you have any includes in your Nginx configs but also works for any folder/file within the Nginx folder.
 This only works for files within the nginx directory!
 Restart the container when you are done"
