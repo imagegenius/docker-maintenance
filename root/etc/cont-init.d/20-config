@@ -6,6 +6,9 @@ if [ ! -d /swag ]; then
 	sleep infinity
 fi
 
+# cleanup logs
+rm -rf /config/log/nginx/*
+
 # make our folders
 mkdir -p \
 	/config/{nginx/site-confs,nginx/proxy-confs,www,log/nginx} \
