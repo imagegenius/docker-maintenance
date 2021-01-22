@@ -15,16 +15,16 @@ sed -i \
 	-e 's/index .*;/index index.html;/g' \
 	/config/nginx/site-confs/*
 
-# fix autoindex
-sed -i \
-	-e 's/autoindex index.html;/autoindex off;/g' \
-	/config/nginx/site-confs/*
-
 # remove logs and potential linked w3 total cache confs
 sed -i \
 	-e '/access_log.*/d' \
 	-e '/error_log.*/d' \
 	-e '/include.*nginx.conf;/d' \
+	/config/nginx/site-confs/*
+
+# fix autoindex
+sed -i \
+	-e 's/autoindex index.html;/autoindex off;/g' \
 	/config/nginx/site-confs/*
 
 for includes in $(cat /config/includes.txt); do
