@@ -6,12 +6,6 @@ Barebones Nginx server made to be a maintenance page for when your SWAG containe
 
 If you have important proxy-confs, such as Home Assistant that you need to have 24/7 uptime, add `proxy-confs/homeassistant.<subdomain/subfolder>.conf` to /config/includes.txt and it will copy over to the maintenance appdata, and you will be able to access Home Assistant through this container. This works for any proxy config.
 
-## Version Information
-
-![alpine](https://img.shields.io/badge/alpine-edge-0D597F?style=for-the-badge&logo=alpine-linux) ![nginx](https://img.shields.io/badge/nginx-1.18.0-269539?style=for-the-badge&logo=nginx)
-
-See [package_versions.txt](package_versions.txt) for a full list of the packages and package versions used in this image
-
 ## Usage
 
     docker run -d \
