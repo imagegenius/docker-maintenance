@@ -20,6 +20,7 @@ musl-utils-1.2.2-r1
 ncurses-libs-6.2_p20210123-r0
 ncurses-terminfo-base-6.2_p20210123-r0
 nginx-1.18.0-r14
+openssl-1.1.1i-r0
 pcre-8.44-r0
 procps-3.3.16-r0
 readline-8.1.0-r0
