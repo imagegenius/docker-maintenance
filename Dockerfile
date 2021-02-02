@@ -10,7 +10,8 @@ LABEL maintainer="hydaz"
 RUN \
 	echo "**** install runtime packages ****" && \
 	apk add --no-cache --upgrade \
-		nginx && \
+		nginx \
+		openssl && \
 	echo "**** configure nginx ****" && \
 	rm -f /etc/nginx/conf.d/default.conf
 

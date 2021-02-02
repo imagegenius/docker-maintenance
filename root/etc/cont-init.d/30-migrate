@@ -1,37 +1,41 @@
 #!/usr/bin/with-contenv bash
 
 if [ -d /swag ]; then
-	# setup symlinks
-	[[ ! -d /config/keys ]] &&
-		ln -s /swag/keys /config/keys
+	[[ -d /config/keys ]] &&
+		rm -rf /config/keys
+
+	ln -sfn \
+		/swag/keys/ /config/keys
 
 	# migrate SWAG configs
 	cp -n \
 		/swag/nginx/site-confs/* \
 		/config/nginx/site-confs/ >/dev/null 2>&1
 
-	# set root and index
-	sed -i \
-		-e 's/root .*;/root \/config\/www\/;/g' \
-		-e 's/index .*;/index index.html;/g' \
-		/config/nginx/site-confs/*
-
-	# remove logs and potential linked w3 total cache confs
-	sed -i \
-		-e '/access_log.*/d' \
-		-e '/error_log.*/d' \
-		-e '/include.*nginx.conf;/d' \
-		/config/nginx/site-confs/*
-
-	# fix autoindex
-	sed -i \
-		-e 's/autoindex index.html;/autoindex off;/g' \
-		/config/nginx/site-confs/*
-
-	for includes in $(cat /config/includes.txt); do
-		if [ ! -f /config/nginx/"$includes" ]; then
-			cp -f /swag/nginx/"$includes" /config/nginx/"$includes"
+	for i in $(cat /config/includes.txt); do
+		if [ ! -f /config/nginx/"${i}" ]; then
+			cp -f /swag/nginx/"${i}" /config/nginx/"${i}"
 		fi
+	done
+
+	for i in "/config/nginx/site-confs/default" $(find /config/nginx -type f -name '*.conf'); do
+		# set root and index
+		sed -i \
+			-e 's|root .*;|root /config/www/;|g' \
+			-e 's/index .*;/index index.html;/g' \
+			"${i}"
+
+		# remove logs and potential linked w3 total cache confs
+		sed -i \
+			-e '/access_log.*/d' \
+			-e '/error_log.*/d' \
+			-e '/include.*nginx.conf;/d' \
+			"${i}"
+
+		# fix autoindex
+		sed -i \
+			-e 's/autoindex index.html;/autoindex off;/g' \
+			"${i}"
 	done
 
 	if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
@@ -40,12 +44,3 @@ if [ -d /swag ]; then
 		sleep infinity
 	fi
 fi
-
-# permissions
-chown -R abc:abc \
-	/config \
-	/var/lib/nginx \
-	/var/tmp/nginx
-chmod -R g+w \
-	/config/{nginx,www}
-chmod -R 644 /etc/logrotate.d
