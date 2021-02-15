@@ -1,5 +1,4 @@
-ARG TAG
-FROM vcxpz/baseimage-alpine:${TAG}
+FROM vcxpz/baseimage-alpine:latest
 
 # Set Arguments
 ARG BUILD_DATE
