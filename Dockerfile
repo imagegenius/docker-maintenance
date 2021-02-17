@@ -17,10 +17,6 @@ RUN \
 # add local files
 COPY root/ /
 
-# http healthcheck
-HEALTHCHECK --start-period=10s --timeout=5s \
-	CMD wget -qO /dev/null 'http://localhost' || exit 1
-
 # ports and volumes
 EXPOSE 80 443
 VOLUME /config
