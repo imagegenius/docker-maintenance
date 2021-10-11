@@ -1,0 +1,47 @@
+#!/usr/bin/with-contenv bash
+
+# make our folders
+mkdir -p \
+	/config/{nginx/site-confs,nginx/proxy-confs,www,log/nginx} \
+	/run \
+	/var/lib/nginx/tmp/client_body \
+	/var/tmp/nginx
+
+# cleanup logs
+find /config/log -name "*.log" -delete
+
+# copy config files
+[[ ! -f /config/nginx/nginx.conf ]] &&
+	cp /defaults/nginx.conf /config/nginx/nginx.conf
+if ! ls -1qA /config/www/ | grep -q .; then
+	cp /defaults/index.html /config/www/index.html
+fi
+
+if [ -d /swag ]; then
+	if [ ! -f /config/includes.txt ]; then
+		printf "dhparams.pem\nsite-confs/default" >/config/includes.txt
+		cd /swag/nginx || exit 1
+		INCLUDES=$(find . -type f -name '*.conf')
+		echo -e ${INCLUDES//.\//\\n} | sed 's/ //g' >>/config/includes.txt
+		echo "Modify the list of files in the /config/includes.txt file to copy over from SWAG. Relative to the '/swag/nginx' folder, so use sample.conf instead of /swag/nginx/sample.conf.
+	Restart the container to continue"
+		sleep infinity
+	fi
+else
+	echo "Maintenance will start in standalone mode as no SWAG appdata is mounted to /swag"
+	[[ ! -f /config/nginx/site-confs/default ]] &&
+		cp /defaults/default /config/nginx/site-confs/default
+	[[ -L ${my_link} ]] &&
+		rm -f /config/keys
+	mkdir -p \
+		/config/keys
+fi
+
+# permissions
+chown -R abc:abc \
+	/config \
+	/var/lib/nginx \
+	/var/tmp/nginx
+chmod -R g+w \
+	/config/{nginx,www}
+chmod -R 644 /etc/logrotate.d

@@ -1,0 +1,46 @@
+#!/usr/bin/with-contenv bash
+
+if [ -d /swag ]; then
+	[[ -d /config/keys ]] &&
+		rm -rf /config/keys
+
+	ln -sfn \
+		/swag/keys/ /config/keys
+
+	# migrate SWAG configs
+	cp -n \
+		/swag/nginx/site-confs/* \
+		/config/nginx/site-confs/ >/dev/null 2>&1
+
+	for i in $(cat /config/includes.txt); do
+		if [ ! -f /config/nginx/"${i}" ]; then
+			cp -f /swag/nginx/"${i}" /config/nginx/"${i}"
+		fi
+	done
+
+	for i in "/config/nginx/site-confs/default" $(find /config/nginx -type f -name '*.conf'); do
+		# set root and index
+		sed -i \
+			-e 's|root .*;|root /config/www/;|g' \
+			-e 's/index .*;/index index.html;/g' \
+			"${i}"
+
+		# remove logs and potential linked w3 total cache confs
+		sed -i \
+			-e '/access_log.*/d' \
+			-e '/error_log.*/d' \
+			-e '/include.*nginx.conf;/d' \
+			"${i}"
+
+		# fix autoindex
+		sed -i \
+			-e 's/autoindex index.html;/autoindex off;/g' \
+			"${i}"
+	done
+
+	if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
+		nginx -t -c /config/nginx/nginx.conf
+		echo "Error: Nginx test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
+		sleep infinity
+	fi
+fi
