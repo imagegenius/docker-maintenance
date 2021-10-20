@@ -10,7 +10,7 @@ on:
       - released
 
 jobs:
-  alpine-latest:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,7 +43,6 @@ jobs:
             --platform=amd64 \
             --output "type=docker" \
             --build-arg BUILD_DATE="$(date +%Y-%m-%d)" \
-            --build-arg VERSION=$(curl -sL "https://api.github.com/repos/hydazz/docker-maintenance/releases/latest" | jq -r '.tag_name') \
             --tag vcxpz/ci-build:ci-build \
             --file Dockerfile .
 
@@ -53,8 +52,6 @@ jobs:
             --platform=linux/amd64,linux/arm64,linux/arm/v7 \
             --output "type=image,push=true" \
             --build-arg BUILD_DATE="$(date +%Y-%m-%d)" \
-            --build-arg VERSION=$(curl -sL "https://api.github.com/repos/hydazz/docker-maintenance/releases/latest" | jq -r '.tag_name') \
-            --tag vcxpz/maintenance:$(curl -sL "https://api.github.com/repos/hydazz/docker-maintenance/releases/latest" | jq -r '.tag_name') \
             --tag vcxpz/maintenance:latest \
             --file Dockerfile .
 
