@@ -7,7 +7,7 @@ LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
 RUN set -xe && \
-	echo "**** install runtime packages ****" && \
+	echo "**** install packages ****" && \
 	apk add --no-cache \
 		nginx \
 		openssl && \
