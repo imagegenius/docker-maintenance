@@ -40,7 +40,7 @@ jobs:
       - name: Build the Docker Image Locally (amd64)
         run: |
           docker buildx build \
-            --platform=amd64 \
+            --platform=linux/amd64 \
             --output "type=docker" \
             --build-arg BUILD_DATE="$(date +%Y-%m-%d)" \
             --tag vcxpz/ci-build:ci-build \
@@ -49,7 +49,7 @@ jobs:
       - name: Build and Push the Docker Image
         run: |
           docker buildx build \
-            --platform=linux/amd64,linux/arm64,linux/arm/v7 \
+            --platform=linux/amd64 \
             --output "type=image,push=true" \
             --build-arg BUILD_DATE="$(date +%Y-%m-%d)" \
             --tag vcxpz/maintenance:latest \
