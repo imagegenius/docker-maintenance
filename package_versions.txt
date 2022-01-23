@@ -33,7 +33,7 @@ shadow-4.10-r3
 skalibs-2.11.1.0-r0
 ssl_client-1.35.0-r1
 tzdata-2021e-r0
-utmps-libs-0.1.1.0-r1
+utmps-libs-0.1.1.0-r2
 xz-5.2.5-r0
 xz-libs-5.2.5-r0
 zlib-1.2.11-r3
