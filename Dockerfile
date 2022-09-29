@@ -1,4 +1,4 @@
-FROM vcxpz/baseimage-alpine:latest
+FROM ghcr.io/linuxserver/baseimage-alpine:3.16
 
 # Set Arguments
 ARG BUILD_DATE
