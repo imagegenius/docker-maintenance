@@ -6,7 +6,7 @@ ARG VERSION
 LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="hydaz"
 
-RUN set -xe && \
+RUN  \
 	echo "**** install packages ****" && \
 	apk add --no-cache \
 		nginx \
