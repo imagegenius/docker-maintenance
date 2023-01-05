@@ -1,10 +1,10 @@
-FROM hydaz/baseimage-alpine:latest
+FROM ghcr.io/imagegenius/baseimage-alpine:latest
 
 # Set Arguments
 ARG BUILD_DATE
 ARG VERSION
-LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="hydaz"
+LABEL build_version="ImageGenius Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="hydazz"
 
 RUN  \
 	echo "**** install packages ****" && \
