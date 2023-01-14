@@ -15,24 +15,24 @@ pipeline {
     BUILDS_DISCORD=credentials('build_webhook_url')
     GITHUB_TOKEN=credentials('github_token')
     BUILD_VERSION_ARG = 'NGINX_VERSION'
-    IG_USER = 'hydazz'
+    IG_USER = 'imagegenius'
     IG_REPO = 'docker-maintenance'
     CONTAINER_NAME = 'maintenance'
-    DOCKERHUB_IMAGE = 'hydaz/maintenance'
+    DOCKERHUB_IMAGE = 'imagegenius/maintenance'
     DEV_DOCKERHUB_IMAGE = 'igdev/maintenance'
     PR_DOCKERHUB_IMAGE = 'igpipepr/maintenance'
     DIST_IMAGE = 'alpine'
     DIST_TAG = '3.17'
-    DIST_REPO = 'http://dl-cdn.alpinelinux.org/alpine/v3.17/main'
+    DIST_REPO = 'http://dl-cdn.alpinelinux.org/alpine/v3.17/main/'
     DIST_REPO_PACKAGES = 'nginx'
     MULTIARCH='false'
     CI='true'
     CI_WEB='true'
     CI_PORT='80'
     CI_SSL='false'
-    CI_DELAY='120'
+    CI_DELAY='30'
     CI_DOCKERENV='TZ=US/Pacific'
-    CI_AUTH='user:password'
+    CI_AUTH=''
     CI_WEBPATH=''
   }
   stages {
@@ -145,10 +145,10 @@ pipeline {
         }
       }
     }
-    // If this is a master build use live docker endpoints
+    // If this is a main build use live docker endpoints
     stage("Set ENV live build"){
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
       }
       steps {
@@ -169,7 +169,7 @@ pipeline {
     // If this is a dev build use dev docker endpoints
     stage("Set ENV dev build"){
       when {
-        not {branch "master"}
+        not {branch "main"}
         environment name: 'CHANGE_ID', value: ''
       }
       steps {
@@ -242,7 +242,7 @@ pipeline {
     // Use helper containers to render templated files
     stage('Update-Templates') {
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
         expression {
           env.CONTAINER_NAME != null
@@ -253,13 +253,13 @@ pipeline {
               set -e
               TEMPDIR=$(mktemp -d)
               docker pull ghcr.io/imagegenius/jenkins-builder:latest
-              docker run --rm -e CONTAINER_NAME=${CONTAINER_NAME} -e GITHUB_BRANCH=master -v ${TEMPDIR}:/ansible/jenkins ghcr.io/imagegenius/jenkins-builder:latest 
+              docker run --rm -e CONTAINER_NAME=${CONTAINER_NAME} -e GITHUB_BRANCH=main -v ${TEMPDIR}:/ansible/jenkins ghcr.io/imagegenius/jenkins-builder:latest 
               # Stage 1 - Jenkinsfile update
               if [[ "$(md5sum Jenkinsfile | awk '{ print $1 }')" != "$(md5sum ${TEMPDIR}/docker-${CONTAINER_NAME}/Jenkinsfile | awk '{ print $1 }')" ]]; then
                 mkdir -p ${TEMPDIR}/repo
                 git clone https://github.com/${IG_USER}/${IG_REPO}.git ${TEMPDIR}/repo/${IG_REPO}
                 cd ${TEMPDIR}/repo/${IG_REPO}
-                git checkout -f master
+                git checkout -f main
                 cp ${TEMPDIR}/docker-${CONTAINER_NAME}/Jenkinsfile ${TEMPDIR}/repo/${IG_REPO}/
                 git add Jenkinsfile
                 git commit -m 'Bot Updating Templated Files'
@@ -279,7 +279,7 @@ pipeline {
                 mkdir -p ${TEMPDIR}/repo
                 git clone https://github.com/${IG_USER}/${IG_REPO}.git ${TEMPDIR}/repo/${IG_REPO}
                 cd ${TEMPDIR}/repo/${IG_REPO}
-                git checkout -f master
+                git checkout -f main
                 cd ${TEMPDIR}/docker-${CONTAINER_NAME}
                 mkdir -p ${TEMPDIR}/repo/${IG_REPO}/.github/workflows
 				mkdir -p ${TEMPDIR}/repo/${IG_REPO}/.github/ISSUE_TEMPLATE
@@ -328,7 +328,7 @@ pipeline {
     // Exit the build if the Templated files were just updated
     stage('Template-exit') {
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
         environment name: 'FILES_UPDATED', value: 'true'
         expression {
@@ -470,7 +470,7 @@ pipeline {
     // Take the image we just built and dump package versions for comparison
     stage('Update-packages') {
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
         environment name: 'EXIT_STATUS', value: ''
       }
@@ -507,7 +507,7 @@ pipeline {
               echo "Package tag sha from current packages in buit container is ${NEW_PACKAGE_TAG} comparing to old ${PACKAGE_TAG} from github"
               if [ "${NEW_PACKAGE_TAG}" != "${PACKAGE_TAG}" ]; then
                 git clone https://github.com/${IG_USER}/${IG_REPO}.git ${TEMPDIR}/${IG_REPO}
-                git --git-dir ${TEMPDIR}/${IG_REPO}/.git checkout -f master
+                git --git-dir ${TEMPDIR}/${IG_REPO}/.git checkout -f main
                 cp ${TEMPDIR}/package_versions.txt ${TEMPDIR}/${IG_REPO}/
                 cd ${TEMPDIR}/${IG_REPO}/
                 wait
@@ -531,7 +531,7 @@ pipeline {
     // Exit the build if the package file was just updated
     stage('PACKAGE-exit') {
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
         environment name: 'PACKAGE_UPDATED', value: 'true'
         environment name: 'EXIT_STATUS', value: ''
@@ -552,7 +552,7 @@ pipeline {
     // Exit the build if this is just a package check and there are no changes to push
     stage('PACKAGECHECK-exit') {
       when {
-        branch "master"
+        branch "main"
         environment name: 'CHANGE_ID', value: ''
         environment name: 'PACKAGE_UPDATED', value: 'false'
         environment name: 'EXIT_STATUS', value: ''
@@ -784,7 +784,7 @@ pipeline {
     // If this is a public release tag it in the LS Github
     stage('Github-Tag-Push-Release') {
       when {
-        branch "master"
+        branch "main"
         expression {
           env.IG_RELEASE != env.EXT_RELEASE_CLEAN + '-ig' + env.IG_TAG_NUMBER
         }
@@ -796,14 +796,14 @@ pipeline {
         sh '''curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST https://api.github.com/repos/${IG_USER}/${IG_REPO}/git/tags \
         -d '{"tag":"'${META_TAG}'",\
              "object": "'${COMMIT_SHA}'",\
-             "message": "Tagging Release '${EXT_RELEASE_CLEAN}'-ig'${IG_TAG_NUMBER}' to master",\
+             "message": "Tagging Release '${EXT_RELEASE_CLEAN}'-ig'${IG_TAG_NUMBER}' to main",\
              "type": "commit",\
              "tagger": {"name": "ImageGenius Jenkins","email": "ci@imagegenius.io","date": "'${GITHUB_DATE}'"}}' '''
         echo "Pushing New release for Tag"
         sh '''#! /bin/bash
               echo "Updating external repo packages to ${EXT_RELEASE_CLEAN}" > releasebody.json
               echo '{"tag_name":"'${META_TAG}'",\
-                     "target_commitish": "master",\
+                     "target_commitish": "main",\
                      "name": "'${META_TAG}'",\
                      "body": "**ImageGenius Changes:**\\n\\n'${IG_RELEASE_NOTES}'\\n\\n**Repo Changes:**\\n\\n' > start
               printf '","draft": false,"prerelease": false}' >> releasebody.json
