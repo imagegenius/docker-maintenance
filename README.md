@@ -2,11 +2,11 @@
 
 # [imagegenius/maintenance](https://github.com/imagegenius/docker-maintenance)
 
-[![GitHub Release](https://img.shields.io/github/release/imagegenius/docker-maintenance.svg?color=94398d&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)](https://github.com/imagegenius/docker-maintenance/releases)
-[![GitHub Package Repository](https://img.shields.io/static/v1.svg?color=94398d&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=imagegenius.io&message=GitHub%20Package&logo=github)](https://github.com/imagegenius/docker-maintenance/packages)
-![Image Size](https://img.shields.io/docker/image-size/imagegenius/maintenance.svg?color=94398d&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=docker)
+[![GitHub Release](https://img.shields.io/github/release/imagegenius/docker-maintenance.svg?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)](https://github.com/imagegenius/docker-maintenance/releases)
+[![GitHub Package Repository](https://img.shields.io/static/v1.svg?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=imagegenius.io&message=GitHub%20Package&logo=github)](https://github.com/imagegenius/docker-maintenance/packages)
+![Image Size](https://img.shields.io/docker/image-size/imagegenius/maintenance/latest.svg?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=docker)
 [![Jenkins Build](https://img.shields.io/jenkins/build?labelColor=555555&logoColor=ffffff&style=for-the-badge&jobUrl=https%3A%2F%2Fci.imagegenius.io%2Fjob%2FDocker-Pipeline-Builders%2Fjob%2Fdocker-maintenance%2Fjob%2Fmain%2F&logo=jenkins)](https://ci.imagegenius.io/job/Docker-Pipeline-Builders/job/docker-maintenance/job/main/)
-[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=94398d&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fimagegenius%2Fmaintenance%2Flatest%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest/index.html)
+[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fimagegenius%2Fmaintenance%2Flatest%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest/index.html)
 
 [Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down
 
@@ -173,4 +173,4 @@ Once registered you can define the dockerfile to use with `-f Dockerfile.aarch64
 
 ## Versions
 
-* **1.02.23:** - Initial Release.
+* **02.01.23:** - Initial Release.
