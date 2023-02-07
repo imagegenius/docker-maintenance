@@ -7,7 +7,7 @@
 [![Docker Hub](https://shields.io/badge/Docker%20Hub-blue?logo=docker&logoColor=ffffff&style=for-the-badge)](https://hub.docker.com/r/imagegenius/maintenance)
 ![Image Size](https://img.shields.io/docker/image-size/imagegenius/maintenance/latest.svg?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=docker)
 [![Jenkins Build](https://img.shields.io/jenkins/build?labelColor=555555&logoColor=ffffff&style=for-the-badge&jobUrl=https%3A%2F%2Fci.imagegenius.io%2Fjob%2FDocker-Pipeline-Builders%2Fjob%2Fdocker-maintenance%2Fjob%2Fmain%2F&logo=jenkins)](https://ci.imagegenius.io/job/Docker-Pipeline-Builders/job/docker-maintenance/job/main/)
-[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fimagegenius%2Fmaintenance%2Flatest-main%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest-main/index.html)
+[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fmaintenance%2Flatest-main%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest-main/index.html)
 
 [Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down
 
@@ -52,7 +52,7 @@ services:
       - PGID=1000
       - TZ=Australia/Melbourne
     volumes:
-      - path_to_data:/config
+      - path_to_appdata:/config
       - path_to_swag:/swag
     ports:
       - 80:80
@@ -70,7 +70,7 @@ docker run -d \
   -e TZ=Australia/Melbourne \
   -p 80:80 \
   -p 443:443 \
-  -v path_to_data:/config \
+  -v path_to_appdata:/config \
   -v path_to_swag:/swag \
   --restart unless-stopped \
   ghcr.io/imagegenius/maintenance:latest
