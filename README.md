@@ -7,7 +7,7 @@
 [![Jenkins Build](https://img.shields.io/jenkins/build?labelColor=555555&logoColor=ffffff&style=for-the-badge&jobUrl=https%3A%2F%2Fci.imagegenius.io%2Fjob%2FDocker-Pipeline-Builders%2Fjob%2Fdocker-maintenance%2Fjob%2Fmain%2F&logo=jenkins)](https://ci.imagegenius.io/job/Docker-Pipeline-Builders/job/docker-maintenance/job/main/)
 [![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fmaintenance%2Flatest-main%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest-main/index.html)
 
-[Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down
+Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down
 
 [![maintenance](https://avatars.githubusercontent.com/u/121947548?s=200&v=4)](https://imagegenius/docker-maintenance/)
 
