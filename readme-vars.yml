@@ -4,7 +4,7 @@
 project_name: maintenance
 project_url: "https://imagegenius/docker-maintenance/"
 project_logo: "https://avatars.githubusercontent.com/u/121947548?s=200&v=4"
-project_blurb: "[{{ project_name|capitalize }}]({{ project_url }}) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down"
+project_blurb: "Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down"
 project_github_repo_url: "https://github.com/imagegenius/docker-{{ project_name }}"
 project_blurb_optional_extras_enabled: false
 
