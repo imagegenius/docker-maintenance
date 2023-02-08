@@ -326,7 +326,7 @@ pipeline {
           --label \"org.opencontainers.image.licenses=GPL-3.0-only\" \
           --label \"org.opencontainers.image.ref.name=${COMMIT_SHA}\" \
           --label \"org.opencontainers.image.title=Maintenance\" \
-          --label \"org.opencontainers.image.description=[Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
+          --label \"org.opencontainers.image.description=Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
           --no-cache --pull -t ${GITHUBIMAGE}:${META_TAG} \
           --build-arg ${BUILD_VERSION_ARG}=${EXT_RELEASE} --build-arg VERSION=\"${VERSION_TAG}\" --build-arg BUILD_DATE=${GITHUB_DATE} ."
       }
@@ -355,7 +355,7 @@ pipeline {
               --label \"org.opencontainers.image.licenses=GPL-3.0-only\" \
               --label \"org.opencontainers.image.ref.name=${COMMIT_SHA}\" \
               --label \"org.opencontainers.image.title=Maintenance\" \
-              --label \"org.opencontainers.image.description=[Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
+              --label \"org.opencontainers.image.description=Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
               --no-cache --pull -t ${GITHUBIMAGE}:amd64-${META_TAG} \
               --build-arg ${BUILD_VERSION_ARG}=${EXT_RELEASE} --build-arg VERSION=\"${VERSION_TAG}\" --build-arg BUILD_DATE=${GITHUB_DATE} ."
           }
@@ -381,7 +381,7 @@ pipeline {
               --label \"org.opencontainers.image.licenses=GPL-3.0-only\" \
               --label \"org.opencontainers.image.ref.name=${COMMIT_SHA}\" \
               --label \"org.opencontainers.image.title=Maintenance\" \
-              --label \"org.opencontainers.image.description=[Maintenance](https://imagegenius/docker-maintenance/) - Minimal Nginx Docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
+              --label \"org.opencontainers.image.description=Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down\" \
               --no-cache --pull -f Dockerfile.aarch64 -t ${GITHUBIMAGE}:arm64v8-${META_TAG} \
               --build-arg ${BUILD_VERSION_ARG}=${EXT_RELEASE} --build-arg VERSION=\"${VERSION_TAG}\" --build-arg BUILD_DATE=${GITHUB_DATE} ."
             sh '''docker tag ${GITHUBIMAGE}:arm64v8-${META_TAG} ghcr.io/imagegenius/igdev-buildcache:arm64v8-${COMMIT_SHA}-${BUILD_NUMBER}
