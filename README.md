@@ -5,7 +5,7 @@
 [![GitHub Release](https://img.shields.io/github/release/imagegenius/docker-maintenance.svg?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)](https://github.com/imagegenius/docker-maintenance/releases)
 [![GitHub Package Repository](https://shields.io/badge/GitHub%20Package-blue?logo=github&logoColor=ffffff&style=for-the-badge)](https://github.com/imagegenius/docker-maintenance/packages)
 [![Jenkins Build](https://img.shields.io/jenkins/build?labelColor=555555&logoColor=ffffff&style=for-the-badge&jobUrl=https%3A%2F%2Fci.imagegenius.io%2Fjob%2FDocker-Pipeline-Builders%2Fjob%2Fdocker-maintenance%2Fjob%2Fmain%2F&logo=jenkins)](https://ci.imagegenius.io/job/Docker-Pipeline-Builders/job/docker-maintenance/job/main/)
-[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fmaintenance%2Flatest-main%2Fci-status.yml)](https://ci-tests.imagegenius.io/imagegenius/maintenance/latest-main/index.html)
+[![IG CI](https://img.shields.io/badge/dynamic/yaml?color=007EC6&labelColor=555555&logoColor=ffffff&style=for-the-badge&label=CI&query=CI&url=https%3A%2F%2Fci-tests.imagegenius.io%2Fmaintenance%2Flatest-main%2Fci-status.yml)](https://ci-tests.imagegenius.io/maintenance/latest-main/index.html)
 
 Maintenance is a minimal nginx docker image with a soul purpose to be a maintenance page for when your main webserver is down
 
@@ -23,6 +23,7 @@ This image supports the following architectures:
 | :----: | :----: | ---- |
 | x86-64 | ✅ | amd64-\<version tag\> |
 | arm64 | ❌ | |
+| armhf | ❌ | |
 
 ## Application Setup
 
@@ -48,7 +49,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Australia/Melbourne
+      - TZ=Etc/UTC
     volumes:
       - path_to_appdata:/config
       - path_to_swag:/swag
@@ -65,16 +66,17 @@ docker run -d \
   --name=maintenance \
   -e PUID=1000 \
   -e PGID=1000 \
-  -e TZ=Australia/Melbourne \
+  -e TZ=Etc/UTC \
   -p 80:80 \
   -p 443:443 \
   -v path_to_appdata:/config \
   -v path_to_swag:/swag \
   --restart unless-stopped \
   ghcr.io/imagegenius/maintenance:latest
+
 ```
 
-## Container Variables
+## Variables
 
 To configure the container, pass variables at runtime using the format `<external>:<internal>`. For instance, `-p 8080:80` exposes port `80` inside the container, making it accessible outside the container via the host's IP on port `8080`.
 
@@ -84,7 +86,7 @@ To configure the container, pass variables at runtime using the format `<externa
 | `-p 443` | HTTPS Port |
 | `-e PUID=1000` | for UserID - see below for explanation |
 | `-e PGID=1000` | for GroupID - see below for explanation |
-| `-e TZ=Australia/Melbourne` | Specify a timezone to use eg. Australia/Melbourne. |
+| `-e TZ=Etc/UTC` | specify a timezone to use, see this [list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). |
 | `-v /config` | Contains configuration files |
 | `-v /swag` | Location of swag appdata on the host |
 
