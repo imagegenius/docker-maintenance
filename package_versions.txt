@@ -33,7 +33,7 @@ netcat-openbsd          1.130-r4          apk
 nghttp2-libs            1.51.0-r0         apk     
 nginx                   1.22.1-r0         apk     
 oniguruma               6.9.8-r0          apk     
-openssl                 3.0.8-r0          apk     
+openssl                 3.0.8-r1          apk     
 pcre                    8.45-r2           apk     
 procps                  3.3.17-r2         apk     
 readline                8.2.0-r0          apk     
