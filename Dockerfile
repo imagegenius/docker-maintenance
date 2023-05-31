@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/imagegenius/baseimage-alpine:3.17
+FROM ghcr.io/imagegenius/baseimage-alpine:3.18
 
 # Set Arguments
 ARG BUILD_DATE
