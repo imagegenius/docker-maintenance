@@ -38,6 +38,7 @@ jobs:
           image="imagegenius/maintenance"
           tag="latest"
           token=$(curl -sX GET \
+            -u "${{ secrets.CR_USER }}:${{ secrets.CR_PAT }}" \
             "https://ghcr.io/token?scope=repository%3Aimagegenius%2Fmaintenance%3Apull" \
             | jq -r '.token')
             digest=$(curl -s \
