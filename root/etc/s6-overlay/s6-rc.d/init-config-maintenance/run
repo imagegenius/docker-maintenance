@@ -1,0 +1,100 @@
+#!/usr/bin/with-contenv bash
+
+# make our folders
+mkdir -p \
+	/config/{nginx/site-confs,nginx/proxy-confs,www,log/nginx} \
+	/run \
+	/var/lib/nginx/tmp/client_body \
+	/var/tmp/nginx
+
+# cleanup logs
+find /config/log -name "*.log" -delete
+
+# copy config files
+[[ ! -f /config/nginx/nginx.conf ]] &&
+	cp /defaults/nginx.conf /config/nginx/nginx.conf
+if ! ls -1qA /config/www/ | grep -q .; then
+	cp /defaults/index.html /config/www/index.html
+fi
+
+if [ -d /swag ]; then
+	if [ ! -f /config/includes.txt ]; then
+		printf "dhparams.pem\nsite-confs/default" >/config/includes.txt
+		cd /swag/nginx || exit 1
+		INCLUDES=$(find . -type f -name '*.conf')
+		echo -e ${INCLUDES//.\//\\n} | sed 's/ //g' >>/config/includes.txt
+		echo "Modify the list of files in the /config/includes.txt file to copy over from SWAG. Relative to the '/swag/nginx' folder, so use sample.conf instead of /swag/nginx/sample.conf.
+	Restart the container to continue"
+		sleep infinity
+	fi
+else
+	echo "Maintenance will start in standalone mode as no SWAG appdata is mounted to /swag"
+	[[ ! -f /config/nginx/site-confs/default ]] &&
+		cp /defaults/default /config/nginx/site-confs/default
+	[[ -L ${my_link} ]] &&
+		rm -f /config/keys
+	mkdir -p \
+		/config/keys
+fi
+
+# permissions
+chown -R abc:abc \
+	/config \
+	/var/lib/nginx \
+	/var/tmp/nginx
+chmod -R g+w \
+	/config/{nginx,www}
+chmod -R 644 /etc/logrotate.d
+
+if [ -d /swag ]; then
+	[[ -d /config/keys ]] &&
+		rm -rf /config/keys
+
+	ln -sfn \
+		/swag/keys/ /config/keys
+
+	# migrate SWAG configs
+	cp -n \
+		/swag/nginx/site-confs/* \
+		/config/nginx/site-confs/ >/dev/null 2>&1
+
+	for i in $(cat /config/includes.txt); do
+		if [ ! -f /config/nginx/"${i}" ]; then
+			cp -f /swag/nginx/"${i}" /config/nginx/"${i}"
+		fi
+	done
+
+	for i in "/config/nginx/site-confs/default" $(find /config/nginx -type f -name '*.conf'); do
+		# set root and index
+		sed -i \
+			-e 's|root .*;|root /config/www/;|g' \
+			-e 's/index .*;/index index.html;/g' \
+			"${i}"
+
+		# remove logs and potential linked w3 total cache confs
+		sed -i \
+			-e '/access_log.*/d' \
+			-e '/error_log.*/d' \
+			-e '/include.*nginx.conf;/d' \
+			"${i}"
+
+		# fix autoindex
+		sed -i \
+			-e 's/autoindex index.html;/autoindex off;/g' \
+			"${i}"
+	done
+
+	if ! nginx -t -c /config/nginx/nginx.conf &>/dev/null; then
+		nginx -t -c /config/nginx/nginx.conf
+		echo "Error: Nginx test failed, this is probably an error migrating your configs from SWAG. Update your configs in the maintenance appdata folder"
+		sleep infinity
+	fi
+fi
+
+SUBJECT="/C=US/ST=CA/L=Carlsbad/O=Linuxserver.io/OU=LSIO Server/CN=*"
+if [[ -f /config/keys/cert.key && -f /config/keys/cert.crt ]]; then
+	echo "using keys found in /config/keys"
+else
+	echo "generating self-signed keys in /config/keys, you can replace these with your own keys if required"
+	openssl req -new -x509 -days 3650 -nodes -out /config/keys/cert.crt -keyout /config/keys/cert.key -subj "$SUBJECT" >/dev/null 2>&1
+fi
